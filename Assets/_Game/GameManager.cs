@@ -8,6 +8,13 @@ public class GameManager : MonoBehaviour
     bool showBin = false;
     bool canAnim = true;
 
+    public BoxCollider2D[] col;
+
+    private void Start()
+    {
+        SetCollidersPos();
+    }
+
     public void ShowBinArrow()
     {
         if (showBin == false)
@@ -60,6 +67,33 @@ public class GameManager : MonoBehaviour
             Vector3 angle = arrow.transform.eulerAngles;
             angle.z -= 180;
             arrow.transform.DORotate(angle, .25f);
+        }
+    }
+
+
+    void SetCollidersPos()
+    {
+        
+        Vector3 val = Camera.main.ViewportToWorldPoint(transform.position);
+        
+        val.x = val.x * 2;
+        val.y = val.y * 2;
+       
+        float leftX = val.x / 2;
+        float leftY = val.y / 2;
+        float xToSum = val.x / col.Length;
+        leftX += (xToSum *-1) /2; 
+        for (int i = 0; i < col.Length; i++)
+        {
+           
+            float xSize = val.x/ col.Length;
+            float ySize = val.y;
+            xSize *= -1;
+            ySize *= -1;
+            col[i].size = new Vector2(xSize, ySize);
+
+            col[i].transform.position = new Vector2(leftX,leftY);
+            leftX += xSize;
         }
     }
 }

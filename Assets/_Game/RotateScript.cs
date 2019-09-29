@@ -12,6 +12,7 @@ public class RotateScript : MonoBehaviour
     public static bool canLevi = true;
     public static bool canAnim = true;
 
+    public static bool canSetLeviToFalse = true; 
     
     void Update()
     {
@@ -23,8 +24,9 @@ public class RotateScript : MonoBehaviour
             Levitation(canLevi);
         }
 
-        if (canLevi == false)
+        if (canLevi == false && canSetLeviToFalse == true)
         {
+            canSetLeviToFalse = false;
             transform.DOKill();
         }
     }
@@ -52,7 +54,7 @@ public class RotateScript : MonoBehaviour
     {
         if (canLevi == false)
         {
-            transform.position = transform.parent.transform.position;
+            transform.position = Vector3.Lerp(transform.position, transform.parent.transform.position,0.1f) ;
         }
     }
 }
