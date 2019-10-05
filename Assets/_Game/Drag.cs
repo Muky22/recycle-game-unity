@@ -10,40 +10,41 @@ public class Drag : MonoBehaviour
 
     bool wasDragging = false;
 
-    public LayerMask layerM;
+    public LayerMask layerM,collidersLayer;
     
     
     private void Update()
     {
-       
         if (Input.GetMouseButtonDown(0))
         {
-            
-            mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mouseStartPos, new Vector3(0,-0.5f,0),layerM);
-            Debug.DrawRay(mouseStartPos, new Vector3(0, -0.5f, 0));
+           
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, new Vector3(0, -0.01f, 0), 0.5f);
+
             if (hit.collider != null)
             {
-                if (hit.collider.tag == "Item")
-                {
-                    isDragging = true;
-                    dragObjStartPos = transform.position;
-                    wasDragging = true;
-                    RotateScript.canLevi = false;
-                }
+                
+                Debug.Log(hit.collider.transform.name);
+                transform.DOScale(new Vector3(0.25f, 0.25f, 0.25f), 1f);
+                mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                isDragging = true;
+                dragObjStartPos = transform.position;
+                wasDragging = true;
+                RotateScript.canLevi = false;
             }
-          
         }
         else if (Input.GetMouseButtonUp(0))
         {
             if (wasDragging == true)
             {
                 wasDragging = false;
+                /*
                 RotateScript.canAnim = true;
                 RotateScript.canLevi = true;
-                RotateScript.canSetLeviToFalse = true;
+                RotateScript.canSetLeviToFalse = true;*/
+                TowardsBin();
 
-               
+
             }
             isDragging = false;
            
@@ -51,12 +52,23 @@ public class Drag : MonoBehaviour
         
         if (isDragging)
         {
-           
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-           
-            Vector2 dir = mousePos - mouseStartPos;
-            transform.position = dragObjStartPos + dir;
-
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, new Vector3(0, -0.01f, 0), 0.5f,collidersLayer);
+      
+            if (hit.collider != null)
+            {
+               
+                transform.DOMoveX(hit.transform.position.x, 1f);
+               
+            }
+            
         }
+
+        
+    }
+
+    void TowardsBin()
+    {
+        transform.DOMoveY(-5, 1f);
     }
 }

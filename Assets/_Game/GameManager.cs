@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     bool canAnim = true;
 
     public BoxCollider2D[] col;
+    public GameObject[] bins;
 
     private void Start()
     {
@@ -73,7 +74,6 @@ public class GameManager : MonoBehaviour
 
     void SetCollidersPos()
     {
-        
         Vector3 val = Camera.main.ViewportToWorldPoint(transform.position);
         
         val.x = val.x * 2;
@@ -85,14 +85,14 @@ public class GameManager : MonoBehaviour
         leftX += (xToSum *-1) /2; 
         for (int i = 0; i < col.Length; i++)
         {
-           
             float xSize = val.x/ col.Length;
             float ySize = val.y;
             xSize *= -1;
             ySize *= -1;
             col[i].size = new Vector2(xSize, ySize);
-
             col[i].transform.position = new Vector2(leftX,leftY);
+
+            bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
         }
     }
