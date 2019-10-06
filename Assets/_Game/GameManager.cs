@@ -1,21 +1,98 @@
 ﻿using DG.Tweening;
+using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject binObj,arrow;
-    public float showBinYValue,showTime;
+    public GameObject DragOBJ;
+    public GameObject binObj, arrow;
+    public float showBinYValue, showTime;
     bool showBin = false;
     bool canAnim = true;
 
     public BoxCollider2D[] col;
     public GameObject[] bins;
+    
+    [Header("Canvas_Lvl_Bar")]
+    public TextMeshProUGUI lvlText, lvlText_2, lvlText_3;
+    [Header("Canvas_Exp_Lvl")]
+    public Image expBar;
+    public int level = 1;
+    public float currExp = 0;
+    public float expRequired = 50;
+
+    [Header("Items")]
+    public GameObject[] Items;
+
+    [Header("Menu")]
+    public CanvasGroup MenuOBJ,Profile,LeaderB,Compare,About;
 
     private void Start()
     {
+        ChooseItem();
         SetCollidersPos();
+        SetValues();
     }
 
+    public void ChooseItem()
+    {
+        
+        int randIndex = Random.Range(0, Items.Length);
+        GameObject item = Instantiate( Items[randIndex]);
+        item.transform.SetParent(DragOBJ.transform);
+        item.SetActive(true);
+        item.AddComponent<RotateScript>();
+        
+        item.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
+        item.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
+        item.transform.position = Vector2.zero;
+       
+        Debug.Log(item.transform.position);
+        DragOBJ.transform.tag = item.transform.tag;
+    }
+
+    public void SetValues()
+    {
+        if (level == 1)
+        {
+            expBar.fillAmount = 0;
+        }
+        
+        lvlText.text = level.ToString();
+        lvlText_2.text = (level + 1).ToString();
+        lvlText_3.text = (level + 2).ToString();
+    }
+
+    void XpBar()
+    {
+        if (currExp >= expRequired)
+        {
+            expBar.fillAmount = 0;
+            level++;
+            currExp -= expRequired;
+            expRequired *= 2;
+            SetValues();
+            DoXpBarFill();
+        }
+    }
+
+    public void DoXpBarFill()
+    {
+        expBar.DOKill();
+        expBar.DOFillAmount(currExp / expRequired,0.5f).OnComplete(()=> 
+        {
+            XpBar();
+        });
+    }
+
+    public void AddXp()
+    {
+        currExp += 100;
+        DoXpBarFill();
+    }
+   
     public void ShowBinArrow()
     {
         if (showBin == false)
@@ -53,7 +130,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void SetArrowRotation()
     {
         if (arrow.transform.eulerAngles.z + 180 <= 360)
@@ -70,8 +146,7 @@ public class GameManager : MonoBehaviour
             arrow.transform.DORotate(angle, .25f);
         }
     }
-
-
+    
     void SetCollidersPos()
     {
         Vector3 val = Camera.main.ViewportToWorldPoint(transform.position);
@@ -94,6 +169,122 @@ public class GameManager : MonoBehaviour
 
             bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
+        }
+    }
+    
+    // Buttony
+
+    public void DoAnim(GameObject GMO)
+    {
+        if (GMO == null)
+        {
+            return;
+        }
+        else
+        {
+            GMO.transform.DOKill();
+            GMO.transform.localScale = new Vector3(1, 1, 1);
+            GMO.transform.DOPunchScale(GMO.transform.localScale, 0.18f);
+        }
+    }
+
+    public void Close_Scene(CanvasGroup CG)
+    {
+        if (CG == null)
+        {
+            return;
+        }
+        else
+        {
+            if (CG.transform.name != "Menu")
+            {
+                Utils.SetTimeout(this, () =>
+                {
+                    CG.DOFade(0, 0.3f).OnComplete(() =>
+                    {
+                        CG.gameObject.SetActive(false);
+                    });
+                    return true;
+                }, 0.2f);
+            }
+            else
+            {
+                Utils.SetTimeout(this, () =>
+                {
+                    CG.DOFade(0, 0.3f).OnComplete(() =>
+                    {
+                        CG.gameObject.SetActive(false);
+                        DragOBJ.SetActive(true);
+                        binObj.SetActive(true);
+                    });
+                    
+                    return true;
+                }, 0.2f);
+            }
+        }
+    }
+
+    public void Open_Scene(CanvasGroup CG)
+    {
+        if (CG == null)
+        {
+            return;
+        }
+        else
+        {
+            if (CG.transform.name == "Menu")
+            {
+                DragOBJ.SetActive(false);
+                binObj.SetActive(false);
+                CG.gameObject.SetActive(true);
+                CG.DOFade(1, 0.3f);
+            }
+            else
+            {
+                Utils.SetTimeout(this, () =>
+                {
+                    CG.gameObject.SetActive(true);
+                    CG.DOFade(1, 0.3f);
+                    return true;
+                }, 0.2f);
+            }
+        }
+    }
+
+    public void ShowQuest(GameObject GM)
+    {
+        if (GM == null)
+        {
+            return;
+        }
+        else
+        {
+            Utils.SetTimeout(this, () =>
+            {
+                GM.SetActive(true);
+                DragOBJ.SetActive(false);
+                binObj.SetActive(false);
+                return true;
+            }, 0.2f);
+        }
+    }
+
+    public void CloseQuest(GameObject GM)
+    {
+        if (GM == null)
+        {
+            return;
+        }
+        else
+        {
+            Utils.SetTimeout(this, () =>
+            {
+                GM.SetActive(false);
+                DragOBJ.SetActive(true);
+                binObj.SetActive(true);
+                return true;
+            }, 0.2f);
+            
         }
     }
 }

@@ -7,13 +7,21 @@ public class RotateScript : MonoBehaviour
 
     public float yVal;
 
-    public Ease ease;
+    Ease ease;
 
     public static bool canLevi = true;
     public static bool canAnim = true;
 
-    public static bool canSetLeviToFalse = true; 
-    
+    public static bool canSetLeviToFalse = true;
+
+    private void Start()
+    {
+        ease = Ease.Linear;
+        speed = 100;
+        yVal = 0.55f;
+        leviTime = 0.75f;
+    }
+
     void Update()
     {
         SetPosToParentPos();
