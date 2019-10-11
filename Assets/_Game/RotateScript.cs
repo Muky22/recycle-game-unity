@@ -3,66 +3,53 @@ using DG.Tweening;
 
 public class RotateScript : MonoBehaviour
 {
-    public float speed,leviTime;
-
-    public float yVal;
-
-    Ease ease;
+    public float speed, leviTime;
 
     public static bool canLevi = true;
-    public static bool canAnim = true;
+    public static bool canKillTransform = false;
 
-    public static bool canSetLeviToFalse = true;
-
+    public float yVal;
+   
     private void Start()
     {
-        ease = Ease.Linear;
         speed = 100;
         yVal = 0.55f;
-        leviTime = 0.75f;
-    }
-
-    void Update()
-    {
-        SetPosToParentPos();
-        Rotation();
-        if (canLevi == true && canAnim == true)
-        {
-            canAnim = false;
-            Levitation(canLevi);
-        }
-
-        if (canLevi == false && canSetLeviToFalse == true)
-        {
-            canSetLeviToFalse = false;
-            transform.DOKill();
-        }
+        leviTime = .8f;
     }
     
-    void Levitation(bool on_Off)
+    void Update()
     {
-        if (on_Off == true)
+        Rotation();
+        Levitation();
+    }
+
+    void Levitation()
+    {
+        if (canLevi == true)
         {
-            transform.DOMoveY(transform.position.y + yVal, leviTime).SetEase(ease).OnComplete(() =>
+            canLevi = false;
+            transform.DOMoveY(yVal, leviTime).SetEase(Ease.Linear).OnComplete(() =>
             {
-                transform.DOMoveY(transform.position.y - yVal, leviTime).SetEase(ease).OnComplete(() =>
+                transform.DOMoveY(0, leviTime).SetEase(Ease.Linear).OnComplete(() =>
                 {
-                    Levitation(canLevi);
+                    canLevi = true;
                 });
             });
         }
+        else
+        {
+            if (canKillTransform == true)
+            {
+                canKillTransform = false;
+                transform.DOKill();
+            }
+        }
     }
-
+    
+    
     void Rotation()
     {
         transform.Rotate(new Vector3(0, 1, 0) * speed * Time.deltaTime);
     }
-
-    void SetPosToParentPos()
-    {
-        if (canLevi == false)
-        {
-            transform.position = Vector3.Lerp(transform.position, transform.parent.transform.position,0.1f) ;
-        }
-    }
+   
 }

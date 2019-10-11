@@ -11,10 +11,16 @@ public class Drag : MonoBehaviour
     float startPosX;
     bool isDragging = false;
     bool canDrag = true;
+    public static bool canClick = true;
 
     private void Update()
     {
-        DragControll();
+        if (canClick == true)
+        {
+            
+            DragControll();
+        }
+      
     }
 
     void DragControll()
@@ -29,6 +35,7 @@ public class Drag : MonoBehaviour
                 if (hit.collider != null)
                 {
                     RotateScript.canLevi = false;
+                    RotateScript.canKillTransform = true;
                     startPosX = hit.collider.transform.position.x;
                 }
                 else
@@ -38,6 +45,7 @@ public class Drag : MonoBehaviour
             }
             else if (Input.GetMouseButtonUp(0))
             {
+                canClick = false;
                 if (isDragging == false)
                 {
                     canDrag = false;
@@ -80,6 +88,7 @@ public class Drag : MonoBehaviour
                     if (distance > 0.1f)
                     {
                         isDragging = true;
+                        RotateScript.canLevi = false;
                         transform.DOKill();
                         transform.DOMoveX(hit.collider.transform.position.x, 0.5f);
                     }
@@ -100,24 +109,24 @@ public class Drag : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
         if (collision.gameObject.layer == 4)
         {
             if (collision.transform.tag == transform.tag)
             {
                 AfterTrigger(transform.tag);
-                
+
             }
             else
             {
                 AfterBadSeparate();
-                
+
             }
         }
     }
 
     void AfterTrigger(string tag)
     {
+
         if (tag == "Green") //glass
         {
             TypeHolder.Glass++;
@@ -143,21 +152,29 @@ public class Drag : MonoBehaviour
         }
         Destroy(transform.GetChild(1).gameObject);
         GM.AddXp();
-        GM.ChooseItem();
+        
         transform.DOKill();
         transform.position = Vector2.zero;
         transform.localScale = new Vector3(1, 1, 1);
+        
+        GM.ChooseItem();
+        RotateScript.canLevi = true;
+        RotateScript.canKillTransform = false;
         canDrag = true;
     }
 
     void AfterBadSeparate()
     {
+        
         Destroy(transform.GetChild(1).gameObject);
         GM.SetValues();
-        GM.ChooseItem();
+       
         transform.DOKill();
         transform.position = Vector2.zero;
         transform.localScale = new Vector3(1, 1, 1);
+        GM.ChooseItem();
+        RotateScript.canLevi = true;
+        RotateScript.canKillTransform = false;
         canDrag = true;
         if (GM.level > 2)
         {

@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public float showBinYValue, showTime;
     bool showBin = false;
     bool canAnim = true;
-
+    
     public BoxCollider2D[] col;
     public GameObject[] bins;
     
@@ -38,19 +38,23 @@ public class GameManager : MonoBehaviour
 
     public void ChooseItem()
     {
-        
-        int randIndex = Random.Range(0, Items.Length);
-        GameObject item = Instantiate( Items[randIndex]);
-        item.transform.SetParent(DragOBJ.transform);
-        item.SetActive(true);
-        item.AddComponent<RotateScript>();
-        
-        item.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
-        item.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
-        item.transform.position = Vector2.zero;
-       
-        Debug.Log(item.transform.position);
-        DragOBJ.transform.tag = item.transform.tag;
+        if (DragOBJ.transform.childCount < 3)
+        {
+            Drag.canClick = true;
+            int randIndex = Random.Range(0, Items.Length);
+            GameObject item = Instantiate(Items[randIndex]);
+
+            item.transform.SetParent(DragOBJ.transform);
+            item.SetActive(true);
+
+            item.AddComponent<RotateScript>();
+
+            item.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
+            item.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
+            item.transform.position = Vector3.zero;
+
+            DragOBJ.transform.tag = item.transform.tag;
+        }
     }
 
     public void SetValues()
@@ -165,7 +169,7 @@ public class GameManager : MonoBehaviour
             xSize *= -1;
             ySize *= -1;
             col[i].size = new Vector2(xSize, ySize);
-            col[i].transform.position = new Vector2(leftX,leftY);
+            col[i].transform.position = new Vector2(leftX,leftY+col[i].size.y/2);
 
             bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
@@ -234,6 +238,7 @@ public class GameManager : MonoBehaviour
         {
             if (CG.transform.name == "Menu")
             {
+                ///
                 DragOBJ.SetActive(false);
                 binObj.SetActive(false);
                 CG.gameObject.SetActive(true);
