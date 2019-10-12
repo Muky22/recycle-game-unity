@@ -2,6 +2,7 @@
 using SocketIO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -136,7 +137,13 @@ public class SocketScript
         socket.On("getGlobalQuestRes", (data) =>
         {
             Debug.Log(data);
-            GM.questNumb.text = data.data["progress"].ToString() + "/1 000 000";
+            
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            Double total = Double.Parse(data.data["progress"].ToString());
+            string formatted = total.ToString("#,0", nfi);
+            
+            GM.questNumb.text =  formatted + " / 1 000 000";
             GM.questPerc.text = Mathf.Round(((int.Parse(data.data["progress"].ToString()) / 1000000f) * 100)).ToString() + "%";
             GM.globalQuestFillBar.fillAmount = int.Parse(data.data["progress"].ToString()) / 1000000f;
         });

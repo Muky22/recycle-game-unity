@@ -7440,9 +7440,9 @@ MonoBehaviour:
   expBar: {fileID: 1843261131}
   level: 1
   perc: 0
-  questNumb: {fileID: 0}
-  questPerc: {fileID: 0}
-  globalQuestFillBar: {fileID: 0}
+  questNumb: {fileID: 1769148618}
+  questPerc: {fileID: 1392019234}
+  globalQuestFillBar: {fileID: 1940821670}
   Items:
   - tag: knife
     obj: {fileID: 100000, guid: 9d7d187dedc45b84ebddeddbfa8dab04, type: 3}
@@ -18434,7 +18434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.12191237, g: 0.11480952, b: 0.18867922, a: 0.53333336}
+  m_Color: {r: 0.12191237, g: 0.11480952, b: 0.18867922, a: 0.78431374}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -22787,7 +22787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.003921569}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -26609,9 +26609,9 @@ RectTransform:
   m_Father: {fileID: 382992541}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -115, y: -230}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -839, y: -116}
   m_SizeDelta: {x: 110, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1743922583
