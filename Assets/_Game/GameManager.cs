@@ -35,9 +35,7 @@ public class GameManager : MonoBehaviour
     }
     public ItemV2[] Items;
 
-    [Header("Menu")]
-    public CanvasGroup MenuOBJ,Profile,LeaderB,Compare,About;
-
+   
     public GameObject currentItem;
     public Boolean hasItem = false;
 
@@ -141,18 +139,18 @@ public class GameManager : MonoBehaviour
 
     void SetArrowRotation()
     {
-        if (arrow.transform.GetChild(2).transform.eulerAngles.z + 180 <= 360)
+        if (arrow.transform.GetChild(1).transform.eulerAngles.z + 180 <= 360)
         {
-            Vector3 angle = arrow.transform.eulerAngles;
+            Vector3 angle = arrow.transform.GetChild(1).transform.eulerAngles;
             angle.z += 180;
-            arrow.transform.GetChild(2).transform.DORotate(angle, .25f);
+            arrow.transform.GetChild(1).transform.DORotate(angle, .25f);
         }
 
-        if (arrow.transform.GetChild(2).transform.eulerAngles.z + 180 >= 360)
+        if (arrow.transform.GetChild(1).transform.eulerAngles.z + 180 >= 360)
         {
-            Vector3 angle = arrow.transform.eulerAngles;
+            Vector3 angle = arrow.transform.GetChild(1).transform.eulerAngles;
             angle.z -= 180;
-            arrow.transform.GetChild(2).transform.DORotate(angle, .25f);
+            arrow.transform.GetChild(1).transform.DORotate(angle, .25f);
         }
     }
     
@@ -175,7 +173,7 @@ public class GameManager : MonoBehaviour
             ySize *= -1;
             // col[i].size = new Vector2(xSize, ySize);
             col[i].transform.position = new Vector2(leftX,leftY+ySize/2);
-            // col[i].transform.GetChild(0).transform.localScale = new Vector2(xSize, ySize);
+            col[i].transform.localScale = new Vector2(xSize, ySize);
             // col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
             bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
@@ -209,7 +207,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (CG.transform.name != "Menu")
+            if (CG.transform.name != "MenuCanvas")
             {
                 Utils.SetTimeout(this, () =>
                 {
@@ -245,20 +243,20 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (CG.transform.name == "Menu")
+            if (CG.transform.name == "MenuCanvas")
             {
                 ///
                 DragOBJ.SetActive(false);
                 binObj.SetActive(false);
                 CG.gameObject.SetActive(true);
-                CG.DOFade(1, 0.5f);
+                CG.DOFade(1, 0.3f);
             }
             else
             {
                 Utils.SetTimeout(this, () =>
                 {
                     CG.gameObject.SetActive(true);
-                    CG.DOFade(1, 0.5f);
+                    CG.DOFade(1, 0.3f);
                     return true;
                 }, 0.2f);
             }
@@ -275,7 +273,9 @@ public class GameManager : MonoBehaviour
         {
             Utils.SetTimeout(this, () =>
             {
+                GM.transform.GetChild(0).transform.localScale = Vector3.zero;
                 GM.SetActive(true);
+                GM.transform.GetChild(0).transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
                 DragOBJ.SetActive(false);
                 binObj.SetActive(false);
                 return true;
@@ -318,9 +318,14 @@ public class GameManager : MonoBehaviour
         {
             Utils.SetTimeout(this, () =>
             {
-                GM.SetActive(false);
-                DragOBJ.SetActive(true);
-                binObj.SetActive(true);
+               
+                GM.transform.GetChild(0).transform.DOScale(Vector3.zero, 0.2f).OnComplete(()=> 
+                {
+                    GM.SetActive(false);
+                    DragOBJ.SetActive(true);
+                    binObj.SetActive(true);
+                });
+               
                 return true;
             }, 0.2f);
             

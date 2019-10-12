@@ -36,7 +36,7 @@ public class Drag : MonoBehaviour
             float screenWidth = (Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)).x);
             float leftEdge = screenWidth * -1f;
             
-            if (GM.hasItem)
+            if (GM.hasItem && !IsPointerOverUiObject())
             {
                 isDragging = true;
                 dragInitPosX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
@@ -143,6 +143,15 @@ public class Drag : MonoBehaviour
                 }
             }
         }
+    }
+
+    bool IsPointerOverUiObject()
+    {
+        PointerEventData eventDataCurrPos = new PointerEventData(EventSystem.current);
+        eventDataCurrPos.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrPos, results);
+        return results.Count > 0;
     }
 
     /*
@@ -253,14 +262,7 @@ void OnTriggerEnter2D(Collider2D collision)
     }
 }
 
-bool IsPointerOverUiObject()
-{
-    PointerEventData eventDataCurrPos = new PointerEventData(EventSystem.current);
-    eventDataCurrPos.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-    List<RaycastResult> results = new List<RaycastResult>();
-    EventSystem.current.RaycastAll(eventDataCurrPos, results);
-    return results.Count > 0;
-}
+
 
 
     
