@@ -1,6 +1,9 @@
-﻿using SocketIO;
+﻿using System;
+using SocketIO;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using static GameManager;
 
@@ -20,8 +23,14 @@ public class SocketScript
 
     private SocketIOComponent socket = null;
 
+
+    private GameManager GM;
+    private int lastLevelAnimated = -1;
+
     public SocketScript()
     {
+        GM = Camera.main.GetComponent<GameManager>();
+        
         GameObject go = GameObject.Find("SocketIO");
         socket = go.GetComponent<SocketIOComponent>();
         socket.On("connect", (data) =>
@@ -41,61 +50,81 @@ public class SocketScript
         socket.On("initXpChange", (data) =>
         {
             Debug.Log(data);
-            Camera.main.GetComponent<GameManager>().perc = int.Parse(data.data["perc"].ToString()) / 100f;
-            Camera.main.GetComponent<GameManager>().AddXp();
+            GM.perc = int.Parse(data.data["perc"].ToString()) / 100f;
+            GM.DoXpBarFill();
         });
 
         socket.On("xpChange", (data) =>
         {
             Debug.Log(data);
-            Camera.main.GetComponent<GameManager>().perc = int.Parse(data.data["perc"].ToString()) / 100f;
-            Camera.main.GetComponent<GameManager>().AddXp();
+            GM.perc = int.Parse(data.data["perc"].ToString()) / 100f;
+            GM.DoXpBarFill();
         });
 
         socket.On("initLevelChange", (data) =>
         {
             // GameManager.level = data.data[""]
-            Camera.main.GetComponent<GameManager>().level = int.Parse(data.data["level"].ToString());
-            Camera.main.GetComponent<GameManager>().SetValues();
-            Debug.Log(data.data["level"].ToString());
+            GM.level = int.Parse(data.data["level"].ToString());
+            GM.SetValues();
+
+            lastLevelAnimated = int.Parse(data.data["level"].ToString());
         });
 
         socket.On("levelChange", (data) =>
         {
             // GameManager.level = data.data[""]
-            Camera.main.GetComponent<GameManager>().level = int.Parse(data.data["level"].ToString());
-            Camera.main.GetComponent<GameManager>().SetValues();
-            Debug.Log(data.data["level"].ToString());
+            GM.level = int.Parse(data.data["level"].ToString());
+            GM.SetValues();
+            
+            int level = int.Parse(data.data["level"].ToString());
+
+            if (level != lastLevelAnimated)
+            {
+                lastLevelAnimated = level;
+
+                GameObject GMO = GM.levelHexagonObj;
+                
+                
+                GMO.transform.DOKill();
+                GMO.transform.localScale = new Vector3(1f, 1f, 1f);
+                GMO.transform.DOScale(new Vector3(1.4f, 1.4f, 1.4f), 0.1f).OnComplete(() =>
+                {
+                    GMO.transform.DOScale(new Vector3(1f, 1f, 1f), 0.2f);
+                });
+            }
         });
 
         socket.On("requestItemRes", (data) =>
         {
             string tag = data.data["item"].ToString().Replace("\"", "");
 
-            foreach (ItemV2 item in Camera.main.GetComponent<GameManager>().Items)
+            foreach (ItemV2 item in GM.Items)
             {
                 if (item.tag.Equals(tag))
                 {
                     GameObject objToSpawn = item.obj;
-                    Camera.main.GetComponent<GameManager>().ChooseItem(objToSpawn);
+                    GM.ChooseItem(objToSpawn);
 
                     break;
                 }
             }
+
+            GM.itemText.transform.DOScale(new Vector3(0f, 0f, 0f), 0.2f).OnComplete(() =>
+                {
+                    GM.itemText.GetComponent<TextMeshProUGUI>().text = FirstLetterToUpper(tag).Replace("_", " ");
+
+                    GM.itemText.transform.DOScale(new Vector3(1f, 1f, 1f), 0.4f);
+                });
         });
 
         socket.On("answerItemRes", (data) =>
         {
-            Debug.Log(data);
 
             socket.Emit("requestItem");
         });
 
         socket.On("globalQuestChanged", (data) =>
         {
-            Debug.Log(data);
-            GameManager GM = Camera.main.GetComponent<GameManager>();
-
             int progress = int.Parse(data.data["progress"].ToString());
             progress = progress > 1000000 ? 1000000 : progress;
 
@@ -107,7 +136,6 @@ public class SocketScript
         socket.On("getGlobalQuestRes", (data) =>
         {
             Debug.Log(data);
-            GameManager GM = Camera.main.GetComponent<GameManager>();
             GM.questNumb.text = data.data["progress"].ToString() + "/1 000 000";
             GM.questPerc.text = Mathf.Round(((int.Parse(data.data["progress"].ToString()) / 1000000f) * 100)).ToString() + "%";
             GM.globalQuestFillBar.fillAmount = int.Parse(data.data["progress"].ToString()) / 1000000f;
@@ -127,8 +155,6 @@ public class SocketScript
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["answer"] = answer;
         socket.Emit("answerItem", new JSONObject(data));
-
-        Debug.Log("Server " + answer);
     }
 
     public void OpenGlobalQuest()
@@ -140,5 +166,16 @@ public class SocketScript
     public void CloseGlobalQuest()
     {
         socket.Emit("disableGlobalQuest");
+    }
+    
+    public string FirstLetterToUpper(string str)
+    {
+        if (str == null)
+            return null;
+
+        if (str.Length > 1)
+            return char.ToUpper(str[0]) + str.Substring(1);
+
+        return str.ToUpper();
     }
 }

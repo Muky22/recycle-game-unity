@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     bool showBin = false;
     bool canAnim = true;
     
-    public BoxCollider2D[] col;
+    public GameObject[] col;
     public GameObject[] bins;
     
     [Header("Canvas_Lvl_Bar")]
@@ -38,6 +38,15 @@ public class GameManager : MonoBehaviour
     [Header("Menu")]
     public CanvasGroup MenuOBJ,Profile,LeaderB,Compare,About;
 
+    public GameObject currentItem;
+    public Boolean hasItem = false;
+
+    public Vector3 finalScale;
+
+    public GameObject levelHexagonObj;
+
+    public GameObject itemText;
+    
     private void Start()
     {
         SetCollidersPos();
@@ -49,10 +58,6 @@ public class GameManager : MonoBehaviour
 
     public void ChooseItem(GameObject objToSpawn)
     {
-        if (DragOBJ.transform.childCount < 3)
-        {
-            Drag.canClick = true;
-
             GameObject newObj = Instantiate(objToSpawn);
 
             newObj.transform.SetParent(DragOBJ.transform);
@@ -63,7 +68,20 @@ public class GameManager : MonoBehaviour
             newObj.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
             newObj.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
             newObj.transform.position = Vector3.zero;
-        }
+            
+            newObj.transform.position = new Vector3(
+                newObj.transform.position.x,
+                newObj.transform.position.y,
+                50
+            );
+
+            finalScale = newObj.transform.localScale;
+            
+            newObj.transform.localScale= new Vector3(0f,0f,0f);
+            newObj.transform.DOScale(finalScale, 0.3f);
+            this.hasItem = true;
+            
+            currentItem = newObj;
     }
 
     public void SetValues()
@@ -78,34 +96,10 @@ public class GameManager : MonoBehaviour
         lvlText_3.text = (level + 2).ToString();
     }
 
-    void XpBar()
-    {
-        /*
-        if (currExp >= expRequired)
-        {
-            expBar.fillAmount = 0;
-            level++;
-            currExp -= expRequired;
-            expRequired *= 2;
-            SetValues();
-            DoXpBarFill();
-        }*/
-    }
-
     public void DoXpBarFill()
     {
-        Debug.Log(perc);
         expBar.DOKill();
-        expBar.DOFillAmount(perc,0.5f).OnComplete(()=> 
-        {
-            XpBar();
-        });
-    }
-
-    public void AddXp()
-    {
-
-        DoXpBarFill();
+        expBar.DOFillAmount(perc, 0.5f);
     }
    
     public void ShowBinArrow()
@@ -147,18 +141,18 @@ public class GameManager : MonoBehaviour
 
     void SetArrowRotation()
     {
-        if (arrow.transform.eulerAngles.z + 180 <= 360)
+        if (arrow.transform.GetChild(2).transform.eulerAngles.z + 180 <= 360)
         {
             Vector3 angle = arrow.transform.eulerAngles;
             angle.z += 180;
-            arrow.transform.DORotate(angle, .25f);
+            arrow.transform.GetChild(2).transform.DORotate(angle, .25f);
         }
 
-        if (arrow.transform.eulerAngles.z + 180 >= 360)
+        if (arrow.transform.GetChild(2).transform.eulerAngles.z + 180 >= 360)
         {
             Vector3 angle = arrow.transform.eulerAngles;
             angle.z -= 180;
-            arrow.transform.DORotate(angle, .25f);
+            arrow.transform.GetChild(2).transform.DORotate(angle, .25f);
         }
     }
     
@@ -179,10 +173,10 @@ public class GameManager : MonoBehaviour
             float ySize = val.y;
             xSize *= -1;
             ySize *= -1;
-            col[i].size = new Vector2(xSize, ySize);
-            col[i].transform.position = new Vector2(leftX,leftY+col[i].size.y/2);
-            col[i].transform.GetChild(0).transform.localScale = new Vector2(xSize, ySize);
-            col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
+            // col[i].size = new Vector2(xSize, ySize);
+            col[i].transform.position = new Vector2(leftX,leftY+ySize/2);
+            // col[i].transform.GetChild(0).transform.localScale = new Vector2(xSize, ySize);
+            // col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
             bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
         }
@@ -199,8 +193,11 @@ public class GameManager : MonoBehaviour
         else
         {
             GMO.transform.DOKill();
-            GMO.transform.localScale = new Vector3(1, 1, 1);
-            GMO.transform.DOPunchScale(GMO.transform.localScale, 0.18f);
+            GMO.transform.localScale = new Vector3(1f, 1f, 1f);
+            GMO.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.1f).OnComplete(() =>
+            {
+                GMO.transform.DOScale(new Vector3(1f, 1f, 1f), 0.2f);
+            });
         }
     }
 
@@ -254,14 +251,14 @@ public class GameManager : MonoBehaviour
                 DragOBJ.SetActive(false);
                 binObj.SetActive(false);
                 CG.gameObject.SetActive(true);
-                CG.DOFade(1, 0.3f);
+                CG.DOFade(1, 0.5f);
             }
             else
             {
                 Utils.SetTimeout(this, () =>
                 {
                     CG.gameObject.SetActive(true);
-                    CG.DOFade(1, 0.3f);
+                    CG.DOFade(1, 0.5f);
                     return true;
                 }, 0.2f);
             }
