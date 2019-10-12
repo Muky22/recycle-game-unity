@@ -7,7 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src/**/*.* --exec \"ts-node src/app.ts\"",
     "build": "rm -rf build && tsc",
-    "start": "node build/app.js"
+    "start": "node build/app.js",
+    "migrate:make": "knex migrate:make -x ts",
+    "migrate": "ts-node -P ./tsconfig.json node_modules/.bin/knex migrate:latest --knexfile knexfile.js",
+    "seed:make": "knex seed:make -x ts",
+    "seed": "ts-node -P ./tsconfig.json node_modules/.bin/knex seed:run --knexfile knexfile.js",
+    "db": "DEBUG=log,error,success,warn,info ts-node cli/recreateDatabase.ts && npm run migrate && npm run seed"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +23,8 @@
     "express": "^4.17.1",
     "faker": "^4.1.0",
     "http": "0.0.0",
+    "knex": "^0.19.5",
+    "mysql2": "^1.7.0",
     "socket.io": "^2.3.0",
     "typescript": "^3.6.4"
   },

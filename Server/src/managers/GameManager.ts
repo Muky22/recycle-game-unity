@@ -1,45 +1,57 @@
-import { Items, Item } from "../classes/Items";
+import { Items, Item } from '../classes/Items';
+import { SQL } from '../classes/SQL';
 
 export class GameManager {
-    private hasItem = false;
-    private item: Item = null;
+  private hasItem = false;
+  private item: Item = null;
 
-    constructor(private socket) {
-        this.register();
-    }
+  constructor(private socket) {
+    this.register();
+  }
 
-    register() {
-        this.socket.on("requestItem", () => {
-            if(this.hasItem) {
-                return;
-            }
+  register() {
+    this.socket.on('requestItem', () => {
+      if (this.hasItem) {
+        return;
+      }
 
-            this.item = Items.getRandomItem();
-            this.hasItem = true;
+      this.item = Items.getRandomItem();
+      this.hasItem = true;
 
-            this.socket.emit("requestItemRes", {
-                item: this.item
-            });
-        });
+      this.socket.emit('requestItemRes', {
+        item: this.item,
+      });
+    });
 
-        
-        this.socket.on("answerItem", (data: { answer: string }) => {
-            if(!this.hasItem) {
-                return;
-            }
+    this.socket.on('answerItem', async (data: { answer: string }) => {
+      if (!this.hasItem) {
+        return;
+      }
 
-            if(this.item.correctAnswer === data.answer) {
-                // correct
-                
-                this.socket.emit("answerItemRes", { correct: true });
-            } else {
-                // wrong
-                
-                this.socket.emit("answerItemRes", { correct: false });
-            }
+      const uidQuery = SQL.knex
+        .select(['id'])
+        .from('users')
+        .where('dev_id', this.socket.data.devId);
 
-            this.item = null;
-            this.hasItem = false;
-        });
-    }
+      await SQL.knex.insert({
+        u_id: uidQuery,
+        item: this.item.id,
+        answer: data.answer,
+        correct_answer: this.item.correctAnswer,
+        correct: this.item.correctAnswer === data.answer ? 1 : 0,
+      });
+
+      this.item = null;
+      this.hasItem = false;
+
+      if (this.item.correctAnswer === data.answer) {
+        this.socket.data.LevelManager.onCorrectAnswer();
+        this.socket.data.GlobalQuestManager.addProgress();
+        this.socket.emit('answerItemRes', { correct: true });
+      } else {
+        this.socket.data.LevelManager.onWrongAnswer();
+        this.socket.emit('answerItemRes', { correct: false });
+      }
+    });
+  }
 }
