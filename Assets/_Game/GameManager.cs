@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
         ChooseItem();
         SetCollidersPos();
         SetValues();
+
+        SocketScript.GetInstance().Login();
     }
 
     public void ChooseItem()
@@ -170,7 +172,8 @@ public class GameManager : MonoBehaviour
             ySize *= -1;
             col[i].size = new Vector2(xSize, ySize);
             col[i].transform.position = new Vector2(leftX,leftY+col[i].size.y/2);
-
+            col[i].transform.GetChild(0).transform.localScale = new Vector2(xSize, ySize);
+            col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
             bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
             leftX += xSize;
         }

@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,13 @@ public class Drag : MonoBehaviour
     float startPosX;
     bool isDragging = false;
     bool canDrag = true;
+    bool canFadeBgLine = true;
     public static bool canClick = true;
 
+    public Color alpha;
+   
+    List<GameObject> lineHitColors = new List<GameObject>();
+    GameObject oldLine;
     private void Update()
     {
         if (canClick == true)
@@ -27,11 +33,12 @@ public class Drag : MonoBehaviour
     {
         if (!IsPointerOverUiObject() && canDrag == true)
         {
-            
+           
             if (Input.GetMouseButtonDown(0))
             {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(mousePos, new Vector3(0, -0.01f, 0), 0.5f);
+             
                 if (hit.collider != null)
                 {
                     RotateScript.canLevi = false;
@@ -78,6 +85,7 @@ public class Drag : MonoBehaviour
             {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(mousePos, new Vector3(0, -0.01f, 0), 0.5f);
+                ShowBgLine(hit);
                 if (hit.collider != null)
                 {
                     float distance = mousePos.x - startPosX;
@@ -88,12 +96,16 @@ public class Drag : MonoBehaviour
                     if (distance > 0.1f)
                     {
                         isDragging = true;
-                        RotateScript.canLevi = false;
+                        
                         transform.DOKill();
                         transform.DOMoveX(hit.collider.transform.position.x, 0.5f);
                     }
 
                 }
+
+            }
+            else
+            {
 
             }
         }
@@ -156,11 +168,12 @@ public class Drag : MonoBehaviour
         transform.DOKill();
         transform.position = Vector2.zero;
         transform.localScale = new Vector3(1, 1, 1);
-        
+
         GM.ChooseItem();
         RotateScript.canLevi = true;
         RotateScript.canKillTransform = false;
         canDrag = true;
+       
     }
 
     void AfterBadSeparate()
@@ -176,6 +189,7 @@ public class Drag : MonoBehaviour
         RotateScript.canLevi = true;
         RotateScript.canKillTransform = false;
         canDrag = true;
+       
         if (GM.level > 2)
         {
             GM.level--;
@@ -192,5 +206,34 @@ public class Drag : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrPos, results);
         return results.Count > 0;
+    }
+
+    void ShowBgLine(RaycastHit2D hit)
+    {
+        if (hit.collider != null)
+        {
+            if (oldLine != hit.transform.gameObject && oldLine != null)
+            {
+             
+                canFadeBgLine = true;
+            }
+        }
+        
+
+        if (hit.collider != null && hit.transform.gameObject.layer == 8 && canFadeBgLine == true)
+        {
+            canFadeBgLine = false;
+            oldLine = hit.transform.gameObject;
+            SpriteRenderer sprite = hit.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            Color col = sprite.color;
+            sprite.DOColor(new Color(sprite.color.r, sprite.color.g, sprite.color.b, alpha.a),.5f);
+            if (!lineHitColors.Contains(hit.transform.gameObject))
+            {
+              
+                oldLine = hit.transform.gameObject;
+                lineHitColors.Add(hit.transform.gameObject);
+            }
+        }
+
     }
 }

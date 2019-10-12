@@ -20,7 +20,7 @@ public class RotateScript : MonoBehaviour
     void Update()
     {
         Rotation();
-        Levitation();
+       // Levitation();
     }
 
     void Levitation()
