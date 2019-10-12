@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using SocketIO;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -20,42 +22,47 @@ public class GameManager : MonoBehaviour
     [Header("Canvas_Exp_Lvl")]
     public Image expBar;
     public int level = 1;
-    public float currExp = 0;
-    public float expRequired = 50;
+    public float perc = 0;
 
-    [Header("Items")]
-    public GameObject[] Items;
+    public TextMeshProUGUI questNumb, questPerc;
+    public Image globalQuestFillBar;
+
+    [Serializable]
+    public struct ItemV2
+    {
+        public String tag;
+        public GameObject obj;
+    }
+    public ItemV2[] Items;
 
     [Header("Menu")]
     public CanvasGroup MenuOBJ,Profile,LeaderB,Compare,About;
 
     private void Start()
     {
-        ChooseItem();
         SetCollidersPos();
         SetValues();
 
-        SocketScript.GetInstance().Login();
+        SocketScript.GetInstance();
+
     }
 
-    public void ChooseItem()
+    public void ChooseItem(GameObject objToSpawn)
     {
         if (DragOBJ.transform.childCount < 3)
         {
             Drag.canClick = true;
-            int randIndex = Random.Range(0, Items.Length);
-            GameObject item = Instantiate(Items[randIndex]);
 
-            item.transform.SetParent(DragOBJ.transform);
-            item.SetActive(true);
+            GameObject newObj = Instantiate(objToSpawn);
 
-            item.AddComponent<RotateScript>();
+            newObj.transform.SetParent(DragOBJ.transform);
+            newObj.SetActive(true);
 
-            item.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
-            item.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
-            item.transform.position = Vector3.zero;
+            newObj.AddComponent<RotateScript>();
 
-            DragOBJ.transform.tag = item.transform.tag;
+            newObj.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
+            newObj.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
+            newObj.transform.position = Vector3.zero;
         }
     }
 
@@ -73,6 +80,7 @@ public class GameManager : MonoBehaviour
 
     void XpBar()
     {
+        /*
         if (currExp >= expRequired)
         {
             expBar.fillAmount = 0;
@@ -81,13 +89,14 @@ public class GameManager : MonoBehaviour
             expRequired *= 2;
             SetValues();
             DoXpBarFill();
-        }
+        }*/
     }
 
     public void DoXpBarFill()
     {
+        Debug.Log(perc);
         expBar.DOKill();
-        expBar.DOFillAmount(currExp / expRequired,0.5f).OnComplete(()=> 
+        expBar.DOFillAmount(perc,0.5f).OnComplete(()=> 
         {
             XpBar();
         });
@@ -95,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     public void AddXp()
     {
-        currExp += 100;
+
         DoXpBarFill();
     }
    
@@ -276,6 +285,31 @@ public class GameManager : MonoBehaviour
             }, 0.2f);
         }
     }
+    public void QuestType(bool isGlobal)
+    {
+        if (isGlobal)
+        {
+            SocketScript.GetInstance().OpenGlobalQuest();
+        }
+        else
+        {
+
+        }
+    }
+
+
+    public void CloseQuestType(bool isGlobal)
+    {
+        if (isGlobal)
+        {
+            SocketScript.GetInstance().CloseGlobalQuest();
+        }
+        else
+        {
+
+        }
+    }
+
 
     public void CloseQuest(GameObject GM)
     {

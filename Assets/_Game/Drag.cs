@@ -28,7 +28,7 @@ public class Drag : MonoBehaviour
         }
       
     }
-
+    
     void DragControll()
     {
         if (!IsPointerOverUiObject() && canDrag == true)
@@ -104,10 +104,7 @@ public class Drag : MonoBehaviour
                 }
 
             }
-            else
-            {
-
-            }
+            
         }
        
     }
@@ -123,79 +120,16 @@ public class Drag : MonoBehaviour
     {
         if (collision.gameObject.layer == 4)
         {
-            if (collision.transform.tag == transform.tag)
-            {
-                AfterTrigger(transform.tag);
+            SocketScript.GetInstance().answerItem(collision.transform.tag);
 
-            }
-            else
-            {
-                AfterBadSeparate();
-
-            }
-        }
-    }
-
-    void AfterTrigger(string tag)
-    {
-
-        if (tag == "Green") //glass
-        {
-            TypeHolder.Glass++;
-        }else if(tag == "Yellow") // plast
-        {
-            TypeHolder.Plastic++;
-        }
-        else if (tag == "Red") // electro
-        {
-            TypeHolder.Electro++;
-        }
-        else if (tag == "Blue") // paper
-        {
-            TypeHolder.Paper++;
-        }
-        else if (tag == "Black") //mixed
-        {
-            TypeHolder.Mixed++;
-        }
-        else if (tag == "Orange") // metal
-        {
-            TypeHolder.Metal++;
-        }
-        Destroy(transform.GetChild(1).gameObject);
-        GM.AddXp();
-        
-        transform.DOKill();
-        transform.position = Vector2.zero;
-        transform.localScale = new Vector3(1, 1, 1);
-
-        GM.ChooseItem();
-        RotateScript.canLevi = true;
-        RotateScript.canKillTransform = false;
-        canDrag = true;
-       
-    }
-
-    void AfterBadSeparate()
-    {
-        
-        Destroy(transform.GetChild(1).gameObject);
-        GM.SetValues();
-       
-        transform.DOKill();
-        transform.position = Vector2.zero;
-        transform.localScale = new Vector3(1, 1, 1);
-        GM.ChooseItem();
-        RotateScript.canLevi = true;
-        RotateScript.canKillTransform = false;
-        canDrag = true;
-       
-        if (GM.level > 2)
-        {
-            GM.level--;
-            GM.SetValues();
-            GM.expRequired /= 2;
-            GM.DoXpBarFill();
+            Destroy(transform.GetChild(1).gameObject);
+            transform.DOKill();
+            transform.position = Vector2.zero;
+            transform.localScale = new Vector3(1, 1, 1);
+            RotateScript.canLevi = true;
+            RotateScript.canKillTransform = false;
+            canDrag = true;
+           
         }
     }
 

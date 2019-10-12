@@ -12,7 +12,7 @@
     "migrate": "ts-node -P ./tsconfig.json node_modules/.bin/knex migrate:latest --knexfile knexfile.js",
     "seed:make": "knex seed:make -x ts",
     "seed": "ts-node -P ./tsconfig.json node_modules/.bin/knex seed:run --knexfile knexfile.js",
-    "db": "DEBUG=log,error,success,warn,info ts-node cli/recreateDatabase.ts && npm run migrate && npm run seed"
+    "db": "ts-node cli/recreateDatabase.ts && npm run migrate && npm run seed"
   },
   "keywords": [],
   "author": "",

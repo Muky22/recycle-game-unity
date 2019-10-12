@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(http);
+const io = socketIO(server);
 
 const port = process.env.PORT || 5000;
 
