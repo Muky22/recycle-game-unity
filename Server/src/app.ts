@@ -51,14 +51,18 @@ export class App {
 }
 
 const exitHandler = async (options, exitCode) => {
-  GlobalQuestManager.saveTotal();
+  try {
+    GlobalQuestManager.saveTotal();
 
-  const promises = App.sockets.map(async socket => {
-    await socket.data.LevelManager.saveLevel();
-  });
+    const promises = App.sockets.map(async socket => {
+      await socket.data.LevelManager.saveLevel();
+    });
 
-  await Promise.all(promises);
-  process.exit();
+    await Promise.all(promises);
+    process.exit();
+  } catch (exp) {
+    process.exit();
+  }
 };
 
 //do something when app is closing

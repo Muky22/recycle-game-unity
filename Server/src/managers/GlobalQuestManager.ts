@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { App } from '../app';
 
 export class GlobalQuestManager {
-  static total = null;
+  static total = 0;
   static saveProcess = null;
 
   constructor(private socket) {
