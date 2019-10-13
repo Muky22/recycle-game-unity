@@ -15,7 +15,7 @@ export class GameManager {
         return;
       }
 
-      this.item = Items.getRandomItem();
+      this.item = Items.getRandomItem(this.socket);
       this.hasItem = true;
 
       this.socket.emit('requestItemRes', {
@@ -39,13 +39,11 @@ export class GameManager {
           item: this.item.tag,
           answer: data.answer,
           correct_answer: this.item.correctAnswer,
-          correct: this.item.correctAnswer === data.answer ? 1 : 0,
+          correct: this.item.correctAnswer === data.answer ? 1 : 1, // druhe je 0
         })
         .into('answers');
 
-      console.log(data.answer + ', ' + this.item.correctAnswer);
-
-      if (this.item.correctAnswer === data.answer) {
+      if (this.item.correctAnswer === data.answer || true === true) {
         this.socket.data.LevelManager.onCorrectAnswer();
         this.socket.data.GlobalQuestManager.addProgress();
         this.socket.emit('answerItemRes', { correct: true });

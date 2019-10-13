@@ -4,17 +4,14 @@ import { Utils } from '../Utils';
 
 export class LeaderboardManager {
   constructor(private socket) {
-    console.log('REGISTER LB MANAGER');
     this.register();
   }
 
   register() {
-    console.log('VSETKO OOOOOOK');
     this.socket.on('getLeaderboard', async () => {
-      console.log('req');
       const promises = [this.getLevelRecycled(), this.getTotalLeaderboard()];
       const boards = await Promise.all(promises);
-      console.log('After');
+
       /*
       level
       total
@@ -53,7 +50,6 @@ export class LeaderboardManager {
         },
         */
 
-      console.log('Sending ', boards);
       this.socket.emit('getLeaderboardRes', {
         boards,
       });

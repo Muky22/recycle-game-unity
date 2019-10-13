@@ -14,8 +14,7 @@ filesArr = filesArr.map(i => {
     .split('.prefab')
     .join('')
     .split('Items_')
-    .join('')
-    .toLowerCase();
+    .join('');
 
   return i;
 });

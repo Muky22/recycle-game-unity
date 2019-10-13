@@ -35,7 +35,7 @@ export class ProfileManager {
 
       const maxKeyVerbose = maxKey.charAt(0).toUpperCase() + maxKey.slice(1);
 
-      return {
+      this.socket.emit('getProfileRes', {
         level: this.socket.data.LevelManager.getLevel(),
         quests: 0,
         glass: dataObj.glass ? dataObj.glass : 0,
@@ -45,7 +45,7 @@ export class ProfileManager {
         mixed: dataObj.mixed ? dataObj.mixed : 0,
         metal: dataObj.metal ? dataObj.metal : 0,
         master: maxKeyVerbose + ' Master',
-      };
+      });
     });
   }
 }

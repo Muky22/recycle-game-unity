@@ -23,7 +23,6 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket) {
-  console.log('Connected');
   App.sockets.push(socket);
 
   socket.data = {};
@@ -38,6 +37,8 @@ io.on('connection', function(socket) {
     if (index !== -1) {
       App.sockets.splice(index, 1);
     }
+
+    socket.data = null;
   });
 });
 
@@ -48,3 +49,31 @@ server.listen(port, () => {
 export class App {
   static sockets = [];
 }
+
+const exitHandler = async (options, exitCode) => {
+  try {
+    GlobalQuestManager.saveTotal();
+
+    const promises = App.sockets.map(async socket => {
+      await socket.data.LevelManager.saveLevel();
+    });
+
+    await Promise.all(promises);
+    process.exit();
+  } catch (exp) {
+    process.exit();
+  }
+};
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null, { cleanup: true }));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, { exit: true }));
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, { exit: true }));
+process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
