@@ -3,9 +3,18 @@ import { App } from '../app';
 export class GlobalQuestManager {
   static total = null;
   constructor(private socket) {
-    GlobalQuestManager.total = 0;
-
     this.register();
+    this.loadTotal();
+
+    setInterval(async () => {
+      await this.saveTotal();
+    }, 60000);
+  }
+
+  async saveTotal() {}
+
+  async loadTotal() {
+    GlobalQuestManager.total = 500000;
   }
 
   register() {
@@ -27,14 +36,12 @@ export class GlobalQuestManager {
   }
 
   addProgress() {
-    GlobalQuestManager.total++;
+    GlobalQuestManager.total += 1;
 
-    App.getSocketServer()
-      .sockets.clients()
-      .forEach(c => {
-        if (c.data.globalQuestOpened) {
-          c.emit('globalQuestChanged', { progress: GlobalQuestManager.total });
-        }
-      });
+    App.sockets.forEach(c => {
+      if (c.data.globalQuestOpened) {
+        c.emit('globalQuestChanged', { progress: GlobalQuestManager.total });
+      }
+    });
   }
 }

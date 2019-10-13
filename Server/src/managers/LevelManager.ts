@@ -7,17 +7,21 @@ export class LevelManager {
     this.register();
 
     setInterval(async () => {
-      if (this.lastSaved !== this.socket.data.xp) {
-        this.lastSaved = this.socket.data.xp;
+      await this.saveLevel();
+    }, 60000);
+  }
 
-        await SQL.knex
-          .update({
-            xp: this.socket.data.xp,
-          })
-          .table('users')
-          .where('dev_id', this.socket.data.devid);
-      }
-    }, 10000);
+  async saveLevel() {
+    if (this.lastSaved !== this.socket.data.xp) {
+      this.lastSaved = this.socket.data.xp;
+
+      await SQL.knex
+        .update({
+          xp: this.socket.data.xp,
+        })
+        .table('users')
+        .where('dev_id', this.socket.data.devId);
+    }
   }
 
   async register() {
@@ -35,11 +39,10 @@ export class LevelManager {
 
     const data = this.getLevelData();
     this.socket.emit('initXpChange', { perc: this.getPercentageProgress() });
-    this.socket.emit('initLevelChange', data.level);
+    this.socket.emit('initLevelChange', { level: data.level });
   }
 
-  getLevelData() {
-    let totalXp = this.socket.data.xp;
+  static getLevelData(totalXp) {
     let level = 1;
 
     while (totalXp >= level) {
@@ -48,6 +51,10 @@ export class LevelManager {
     }
 
     return { level, xp: totalXp };
+  }
+
+  getLevelData(totalXp = this.socket.data.xp) {
+    return LevelManager.getLevelData(totalXp);
   }
 
   getPercentageProgress() {
@@ -74,8 +81,15 @@ export class LevelManager {
   onWrongAnswer() {
     const levelBefore = this.getLevel();
 
-    this.socket.data.xp -= this.getXp() + 1;
-    this.socket.data.xp -= this.getXp();
+    if (levelBefore === 1) {
+      return;
+    }
+
+    if (this.getXp() > 0) {
+      this.socket.data.xp -= this.getXp();
+    } else {
+      this.socket.data.xp -= 1;
+    }
 
     this.onXpChange(levelBefore);
   }

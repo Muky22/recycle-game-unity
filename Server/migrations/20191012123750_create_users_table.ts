@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<any> {
       .notNullable()
       .defaultTo(0);
     table.string('nick', 128).notNullable();
+    table.integer('hash').notNullable();
 
     table
       .timestamp('created_at')
