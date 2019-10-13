@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(http);
+const io = socketIO(server);
 
 const port = process.env.PORT || 5000;
 
@@ -24,12 +24,21 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
   console.log('Connected');
-  socket.data = {};
+  App.sockets.push(socket);
 
+  socket.data = {};
   socket.data.AuthManager = new AuthManager(socket);
-  socket.data.GameManager = new GameManager(socket);
-  socket.data.LevelManager = new LevelManager(socket);
-  socket.data.GlobalQuestManager = new GlobalQuestManager(socket);
+
+  socket.on('disconnect', async () => {
+    if (socket.data.LevelManager) {
+      await socket.data.LevelManager.saveLevel();
+    }
+
+    const index = App.sockets.indexOf(socket);
+    if (index !== -1) {
+      App.sockets.splice(index, 1);
+    }
+  });
 });
 
 server.listen(port, () => {
@@ -37,7 +46,5 @@ server.listen(port, () => {
 });
 
 export class App {
-  static getSocketServer() {
-    return io;
-  }
+  static sockets = [];
 }

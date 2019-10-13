@@ -19,12 +19,12 @@ export class GameManager {
       this.hasItem = true;
 
       this.socket.emit('requestItemRes', {
-        item: this.item,
+        item: this.item.tag,
       });
     });
 
     this.socket.on('answerItem', async (data: { answer: string }) => {
-      if (!this.hasItem) {
+      if (!this.hasItem && this.item) {
         return;
       }
 
@@ -33,16 +33,17 @@ export class GameManager {
         .from('users')
         .where('dev_id', this.socket.data.devId);
 
-      await SQL.knex.insert({
-        u_id: uidQuery,
-        item: this.item.id,
-        answer: data.answer,
-        correct_answer: this.item.correctAnswer,
-        correct: this.item.correctAnswer === data.answer ? 1 : 0,
-      });
+      await SQL.knex
+        .insert({
+          u_id: uidQuery,
+          item: this.item.tag,
+          answer: data.answer,
+          correct_answer: this.item.correctAnswer,
+          correct: this.item.correctAnswer === data.answer ? 1 : 0,
+        })
+        .into('answers');
 
-      this.item = null;
-      this.hasItem = false;
+      console.log(data.answer + ', ' + this.item.correctAnswer);
 
       if (this.item.correctAnswer === data.answer) {
         this.socket.data.LevelManager.onCorrectAnswer();
@@ -52,6 +53,9 @@ export class GameManager {
         this.socket.data.LevelManager.onWrongAnswer();
         this.socket.emit('answerItemRes', { correct: false });
       }
+
+      this.item = null;
+      this.hasItem = false;
     });
   }
 }
