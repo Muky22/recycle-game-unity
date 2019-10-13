@@ -1,20 +1,34 @@
+import * as path from 'path';
+import * as fs from 'fs';
 import { App } from '../app';
 
 export class GlobalQuestManager {
   static total = null;
+  static saveProcess = null;
+
   constructor(private socket) {
     this.register();
     this.loadTotal();
 
-    setInterval(async () => {
-      await this.saveTotal();
-    }, 60000);
+    if (GlobalQuestManager.saveProcess === null) {
+      GlobalQuestManager.saveProcess = setInterval(async () => {
+        await GlobalQuestManager.saveTotal();
+      }, 60000);
+    }
   }
 
-  async saveTotal() {}
+  static saveTotal() {
+    fs.writeFileSync(
+      path.join(__dirname, '../../private', 'global.txt'),
+      GlobalQuestManager.total.toString(),
+    );
+  }
 
   async loadTotal() {
-    GlobalQuestManager.total = 500000;
+    const res = fs
+      .readFileSync(path.join(__dirname, '../../private', 'global.txt'))
+      .toString();
+    GlobalQuestManager.total = +res;
   }
 
   register() {

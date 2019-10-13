@@ -23,7 +23,6 @@ export class AuthManager {
     });
 
     this.socket.on('changeNick', async (data: { nick: string }) => {
-      console.log('AAA' + data.nick + 'AAA');
       await SQL.knex
         .update({
           nick: data.nick,
@@ -86,8 +85,6 @@ export class AuthManager {
             .where('dev_id', this.socket.data.devId);
         }
 
-        console.log('Evided');
-
         this.socket.data.GameManager = new GameManager(this.socket);
 
         this.socket.data.LevelManager = new LevelManager(this.socket);
@@ -98,7 +95,6 @@ export class AuthManager {
 
         this.socket.data.ProfileManager = new ProfileManager(this.socket);
 
-        console.log('New LB Manater');
         this.socket.data.LeaderboardManager = new LeaderboardManager(
           this.socket,
         );
