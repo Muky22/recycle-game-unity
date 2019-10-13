@@ -46,6 +46,22 @@ public class SocketScript
             PlayerPrefs.SetString("nick", nick);
 
             socket.Emit("requestItem");
+            
+            
+            socket.Emit("getNick");
+            socket.Emit("getHash");
+        });
+        
+        socket.On("getNickRes", (data) =>
+        {
+            string nick = data.data["nick"].ToString().Replace("\"", "");
+            GM.nickText.text = nick;
+        });
+        
+        socket.On("getHashRes", (data) =>
+        {
+            string hash = data.data["hash"].ToString().Replace("\"", "");
+            GM.hashText.text = "#" + hash;
         });
 
         socket.On("initXpChange", (data) =>

@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     public GameObject levelHexagonObj;
 
     public GameObject itemText;
+
+    public TextMeshProUGUI nickText;
+    public TextMeshProUGUI hashText;
     
     private void Start()
     {
