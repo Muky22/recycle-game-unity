@@ -32,6 +32,7 @@
         <e p="Fonts" t="Include">
           <e p="OFL.txt" t="Include" />
         </e>
+        <e p="ProfileScript.cs" t="Include" />
         <e p="Shapes2D" t="Include">
           <e p="changelog.txt" t="Include" />
           <e p="Demos" t="Include">
