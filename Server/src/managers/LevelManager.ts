@@ -42,8 +42,7 @@ export class LevelManager {
     this.socket.emit('initLevelChange', { level: data.level });
   }
 
-  getLevelData() {
-    let totalXp = this.socket.data.xp;
+  static getLevelData(totalXp) {
     let level = 1;
 
     while (totalXp >= level) {
@@ -52,6 +51,10 @@ export class LevelManager {
     }
 
     return { level, xp: totalXp };
+  }
+
+  getLevelData(totalXp = this.socket.data.xp) {
+    return LevelManager.getLevelData(totalXp);
   }
 
   getPercentageProgress() {

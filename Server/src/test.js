@@ -1,5 +1,4 @@
 const io = require('socket.io-client');
-
 const socket = io('http://localhost:4000/');
 
 const requestItem = () => {
@@ -15,6 +14,11 @@ socket.on('connect', () => {
     socket.emit('autoAuth', { devId: 'test', nick: 'test' });
   }, 1000);
 
+  socket.on('getLeaderboardRes', data => {
+    console.log(JSON.stringify(data, null, 4));
+    process.exit(0);
+  });
+
   socket.on('autoAuthRes', () => {
     console.log('Login');
     requestItem();
@@ -25,7 +29,9 @@ socket.on('connect', () => {
   });
 
   socket.on('answerItemRes', res => {
-    console.log(res);
-    requestItem();
+    console.log('Leaderboard: ');
+    socket.emit('getLeaderboard');
+    // console.log(res);
+    // requestItem();
   });
 });
