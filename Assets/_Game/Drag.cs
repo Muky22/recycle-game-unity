@@ -30,12 +30,7 @@ public class Drag : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            // once, left click
-            float currentPosY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
-            float currentPosX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
-            float screenWidth = (Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)).x);
-            float leftEdge = screenWidth * -1f;
-            
+            // once, left click            
             if (GM.hasItem && !IsPointerOverUiObject())
             {
                 isDragging = true;

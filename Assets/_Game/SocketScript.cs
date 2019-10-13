@@ -27,6 +27,7 @@ public class SocketScript
 
     private GameManager GM;
     private int lastLevelAnimated = -1;
+    public string Name;
 
     public SocketScript()
     {
@@ -56,6 +57,7 @@ public class SocketScript
         {
             string nick = data.data["nick"].ToString().Replace("\"", "");
             GM.nickText.text = nick;
+            Name = nick;
         });
         
         socket.On("getHashRes", (data) =>
@@ -189,6 +191,13 @@ public class SocketScript
     public void CloseGlobalQuest()
     {
         socket.Emit("disableGlobalQuest");
+    }
+
+    public void SendChangedNick(string nick)
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["nick"] = nick;
+        socket.Emit("changeNick", new JSONObject(data));
     }
     
     public string FirstLetterToUpper(string str)

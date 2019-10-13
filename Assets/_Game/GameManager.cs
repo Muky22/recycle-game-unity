@@ -24,8 +24,9 @@ public class GameManager : MonoBehaviour
     public int level = 1;
     public float perc = 0;
 
-    public TextMeshProUGUI questNumb, questPerc;
+    public TextMeshProUGUI questNumb, questPerc,editChangedNick;
     public Image globalQuestFillBar;
+    public TMP_InputField editInputField;
 
     [Serializable]
     public struct ItemV2
@@ -285,6 +286,7 @@ public class GameManager : MonoBehaviour
             }, 0.2f);
         }
     }
+
     public void QuestType(bool isGlobal)
     {
         if (isGlobal)
@@ -297,7 +299,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    public void SetInputFieldNick()
+    {
+        editInputField.text = SocketScript.GetInstance().Name;
+    }
+    
     public void CloseQuestType(bool isGlobal)
     {
         if (isGlobal)
@@ -309,8 +315,7 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
-
+    
     public void CloseQuest(GameObject GM)
     {
         if (GM == null)
@@ -333,5 +338,13 @@ public class GameManager : MonoBehaviour
             }, 0.2f);
             
         }
+    }
+
+    public void SaveChangedNick()
+    {
+        SocketScript.GetInstance().SendChangedNick(editChangedNick.text);
+        SocketScript.GetInstance().Name = editChangedNick.text;
+        nickText.text = editChangedNick.text;
+        
     }
 }
