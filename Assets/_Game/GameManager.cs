@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI nickText;
     public TextMeshProUGUI hashText;
+
+    public ProfileScript PS;
     
     private void Start()
     {
@@ -56,6 +58,17 @@ public class GameManager : MonoBehaviour
 
         SocketScript.GetInstance();
 
+    }
+
+    public void OnSliderChange(GameObject slider)
+    {
+        float val = slider.GetComponent<Slider>().value;
+        float rotation = val * 360f;
+
+        rotation -= 160f;
+
+        DragOBJ.transform.DOKill();
+        DragOBJ.transform.DOLocalRotate(new Vector3(rotation, 0, 0), 0.2f);
     }
 
     public void ChooseItem(GameObject objToSpawn)
@@ -74,7 +87,7 @@ public class GameManager : MonoBehaviour
             newObj.transform.position = new Vector3(
                 newObj.transform.position.x,
                 newObj.transform.position.y,
-                50
+                100
             );
 
             finalScale = newObj.transform.localScale;
@@ -346,5 +359,10 @@ public class GameManager : MonoBehaviour
         SocketScript.GetInstance().Name = editChangedNick.text;
         nickText.text = editChangedNick.text;
         
+    }
+
+    public void OpenProfile()
+    {
+        SocketScript.GetInstance().GetProfile();
     }
 }

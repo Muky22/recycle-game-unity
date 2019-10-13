@@ -3,6 +3,7 @@ using SocketIO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -116,30 +117,42 @@ public class SocketScript
         socket.On("requestItemRes", (data) =>
         {
             string tag = data.data["item"].ToString().Replace("\"", "");
+            
+            GameObject objToSpawn = Resources.Load<GameObject>("Items_" + tag);
+            GM.ChooseItem(objToSpawn);
 
-            foreach (ItemV2 item in GM.Items)
-            {
-                if (item.tag.Equals(tag))
-                {
-                    GameObject objToSpawn = item.obj;
-                    GM.ChooseItem(objToSpawn);
-
-                    break;
-                }
-            }
-
+            GM.itemText.transform.DOKill();
             GM.itemText.transform.DOScale(new Vector3(0f, 0f, 0f), 0.2f).OnComplete(() =>
-                {
-                    GM.itemText.GetComponent<TextMeshProUGUI>().text = FirstLetterToUpper(tag).Replace("_", " ");
+            {
+                GM.itemText.GetComponent<TextMeshProUGUI>().text =
+                    FirstLetterToUpper(ToUnderscoreCase(FirstLetterToUpper(tag).Replace("_", " ").Split(' ')[0]).Replace("_", " "));
 
-                    GM.itemText.transform.DOScale(new Vector3(1f, 1f, 1f), 0.4f);
-                });
+                GM.itemText.transform.DOKill();
+                GM.itemText.transform.DOScale(new Vector3(1f, 1f, 1f), 0.4f);
+            });
         });
 
         socket.On("answerItemRes", (data) =>
         {
 
             socket.Emit("requestItem");
+        });
+
+        socket.On("getProfileRes", (data) =>
+        {
+            // {"level":1,"quests":0,"glass":0,"plastic":0,"ewaste":0,"paper":0,"mixed":0,"metal":0,"master":"Blue Master"}]
+            
+            GM.PS.SetStats(
+                data.data["level"].ToString().Replace("\"", ""),
+                data.data["quests"].ToString().Replace("\"", ""),
+                data.data["glass"].ToString().Replace("\"", ""),
+                data.data["plastic"].ToString().Replace("\"", ""),
+                data.data["ewaste"].ToString().Replace("\"", ""),
+                data.data["paper"].ToString().Replace("\"", ""),
+                data.data["mixed"].ToString().Replace("\"", ""),
+                data.data["metal"].ToString().Replace("\"", ""),
+                data.data["master"].ToString().Replace("\"", "")
+            );
         });
 
         socket.On("globalQuestChanged", (data) =>
@@ -192,6 +205,11 @@ public class SocketScript
     {
         socket.Emit("disableGlobalQuest");
     }
+    
+    public void GetProfile()
+    {
+        socket.Emit("getProfile");
+    }
 
     public void SendChangedNick(string nick)
     {
@@ -209,5 +227,9 @@ public class SocketScript
             return char.ToUpper(str[0]) + str.Substring(1);
 
         return str.ToUpper();
+    }
+    
+    public static string ToUnderscoreCase(string str) {
+        return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
     }
 }

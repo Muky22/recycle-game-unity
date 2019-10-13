@@ -114,22 +114,22 @@ public class Drag : MonoBehaviour
                     switch (lastI)
                     {
                         case 0:
-                            tag = "Green";
+                            tag = "glass";
                             break;
                         case 1:
-                            tag = "Yellow";
+                            tag = "plastic";
                             break;
                         case 2:
-                            tag = "Red";
+                            tag = "ewaste";
                             break;
                         case 3:
-                            tag = "Blue";
+                            tag = "paper";
                             break;
                         case 4:
-                            tag = "Black";
+                            tag = "mixed";
                             break;
                         case 5:
-                            tag = "Orange";
+                            tag = "metal";
                             break;
                     }
                             
