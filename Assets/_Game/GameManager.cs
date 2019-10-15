@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
     {
         SetCollidersPos();
         SetValues();
-
+        DragOBJ.transform.position = new Vector3(0, 0, 85);
         SocketScript.GetInstance();
 
     }
@@ -79,15 +79,13 @@ public class GameManager : MonoBehaviour
             newObj.SetActive(true);
 
             newObj.AddComponent<RotateScript>();
-
-            newObj.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
-            newObj.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
+            newObj.transform.localScale = new Vector3(3,3,3);
             newObj.transform.position = Vector3.zero;
             
             newObj.transform.position = new Vector3(
                 newObj.transform.position.x,
                 newObj.transform.position.y,
-                100
+                85
             );
 
             finalScale = newObj.transform.localScale;
@@ -189,10 +187,10 @@ public class GameManager : MonoBehaviour
             xSize *= -1;
             ySize *= -1;
             // col[i].size = new Vector2(xSize, ySize);
-            col[i].transform.position = new Vector2(leftX,leftY+ySize/2);
+            col[i].transform.position = new Vector3(leftX,leftY+ySize/2,90);
             col[i].transform.localScale = new Vector2(xSize, ySize);
             // col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
-            bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
+            bins[i].transform.position = new Vector3( col[i].transform.position.x,bins[i].transform.position.y,83);
             leftX += xSize;
         }
     }
