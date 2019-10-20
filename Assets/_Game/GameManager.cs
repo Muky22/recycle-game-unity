@@ -1,7 +1,5 @@
 ﻿using DG.Tweening;
-using SocketIO;
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +25,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI questNumb, questPerc,editChangedNick;
     public Image globalQuestFillBar;
     public TMP_InputField editInputField;
+    public Ease ease;
 
     [Serializable]
     public struct ItemV2
@@ -53,12 +52,14 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
+      
         SetCollidersPos();
         SetValues();
         DragOBJ.transform.position = new Vector3(0, 0, 85);
         SocketScript.GetInstance();
-
+     
     }
+    
 
     public void OnSliderChange(GameObject slider)
     {
@@ -363,4 +364,21 @@ public class GameManager : MonoBehaviour
     {
         SocketScript.GetInstance().GetProfile();
     }
+
+    public void EffectUpBin(int i) // dobre si potriedil
+    {
+        /*
+        bins[i].transform.DOMoveY(bins[i].transform.position.y + 0.3f, 0.1f).SetEase(ease).OnComplete(()=> 
+        {
+            bins[i].transform.DOMoveY(bins[i].transform.position.y - 0.3f, 0.1f).SetEase(ease);
+        }); */
+        bins[i].transform.DOPunchPosition(new Vector3(0, 0.3f, 0), 0.3f);
+    }
+    
+    public void Vibration() // zle si potriedil
+    {
+        Handheld.Vibrate();
+    }
+    
 }
+
