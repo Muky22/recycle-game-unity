@@ -2,17 +2,18 @@ import { SQL } from '../classes/SQL';
 
 export class LevelManager {
   lastSaved = 0;
+  interval = null;
 
   constructor(private socket) {
     this.register();
 
-    setInterval(async () => {
+    this.interval = setInterval(async () => {
       await this.saveLevel();
     }, 60000);
   }
 
   async saveLevel() {
-    if (this.lastSaved !== this.socket.data.xp) {
+    if (this.socket.data && this.lastSaved !== this.socket.data.xp) {
       this.lastSaved = this.socket.data.xp;
 
       await SQL.knex
@@ -22,6 +23,11 @@ export class LevelManager {
         .table('users')
         .where('dev_id', this.socket.data.devId);
     }
+  }
+
+  async destroy() {
+    await this.saveLevel();
+    clearInterval(this.interval);
   }
 
   async register() {

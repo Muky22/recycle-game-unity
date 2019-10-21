@@ -30,7 +30,7 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', async () => {
     if (socket.data.LevelManager) {
-      await socket.data.LevelManager.saveLevel();
+      await socket.data.LevelManager.destroy();
     }
 
     const index = App.sockets.indexOf(socket);
