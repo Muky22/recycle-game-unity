@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public GameObject starObj;
+    public AnswerEffectScript answerEffectScript;
     public GameObject DragOBJ;
     public GameObject binObj, arrow;
     public float showBinYValue, showTime;
@@ -57,7 +59,8 @@ public class GameManager : MonoBehaviour
         SetValues();
         DragOBJ.transform.position = new Vector3(0, 0, 85);
         SocketScript.GetInstance();
-     
+
+
     }
     
 
@@ -365,20 +368,9 @@ public class GameManager : MonoBehaviour
         SocketScript.GetInstance().GetProfile();
     }
 
-    public void EffectUpBin(int i) // dobre si potriedil
+    public void spawnStar()
     {
-        /*
-        bins[i].transform.DOMoveY(bins[i].transform.position.y + 0.3f, 0.1f).SetEase(ease).OnComplete(()=> 
-        {
-            bins[i].transform.DOMoveY(bins[i].transform.position.y - 0.3f, 0.1f).SetEase(ease);
-        }); */
-        bins[i].transform.DOPunchPosition(new Vector3(0, 0.3f, 0), 0.3f);
+        Instantiate(starObj);
     }
-    
-    public void Vibration() // zle si potriedil
-    {
-        Handheld.Vibrate();
-    }
-    
 }
 

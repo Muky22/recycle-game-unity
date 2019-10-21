@@ -15,6 +15,7 @@
           <e p="TypeHolder.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
+        <e p="AnswerEffectScript.cs" t="Include" />
         <e p="Demigiant" t="Include">
           <e p="DOTween" t="Include">
             <e p="Modules" t="Include">
@@ -32,6 +33,7 @@
         <e p="Fonts" t="Include">
           <e p="OFL.txt" t="Include" />
         </e>
+        <e p="LeaderBoard.cs" t="Include" />
         <e p="ProfileScript.cs" t="Include" />
         <e p="Shapes2D" t="Include">
           <e p="changelog.txt" t="Include" />
@@ -170,6 +172,7 @@
             <e p="WebSocketStream.cs" t="Include" />
           </e>
         </e>
+        <e p="StarEffect.cs" t="Include" />
         <e p="TextMesh Pro" t="Include">
           <e p="Fonts" t="Include">
             <e p="LiberationSans - OFL.txt" t="Include" />
@@ -212,6 +215,8 @@
         <e p="express" t="IncludeRecursive" />
         <e p="faker" t="IncludeRecursive" />
         <e p="http" t="IncludeRecursive" />
+        <e p="knex" t="IncludeRecursive" />
+        <e p="mysql2" t="IncludeRecursive" />
         <e p="socket.io" t="IncludeRecursive" />
         <e p="typescript" t="IncludeRecursive" />
       </e>

@@ -69,14 +69,12 @@ public class SocketScript
 
         socket.On("initXpChange", (data) =>
         {
-            Debug.Log(data);
             GM.perc = int.Parse(data.data["perc"].ToString()) / 100f;
             GM.DoXpBarFill();
         });
 
         socket.On("xpChange", (data) =>
         {
-            Debug.Log(data);
             GM.perc = int.Parse(data.data["perc"].ToString()) / 100f;
             GM.DoXpBarFill();
         });
@@ -134,7 +132,18 @@ public class SocketScript
 
         socket.On("answerItemRes", (data) =>
         {
+            string res = data.data["correct"].ToString().Replace("\"", "");
 
+            if (res == "true")
+            {
+                    GM.answerEffectScript.ShowCorrect();
+            }
+            else
+            {
+                GM.answerEffectScript.ShowWrong();
+            }
+            
+            
             socket.Emit("requestItem");
         });
 
@@ -167,8 +176,6 @@ public class SocketScript
 
         socket.On("getGlobalQuestRes", (data) =>
         {
-            Debug.Log(data);
-            
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
             Double total = Double.Parse(data.data["progress"].ToString());
@@ -177,6 +184,13 @@ public class SocketScript
             GM.questNumb.text =  formatted + " / 1 000 000";
             GM.questPerc.text = Mathf.Round(((int.Parse(data.data["progress"].ToString()) / 1000000f) * 100)).ToString() + "%";
             GM.globalQuestFillBar.fillAmount = int.Parse(data.data["progress"].ToString()) / 1000000f;
+        });
+        
+        socket.On("anyoneSeparate", (data) =>
+        {
+            Debug.Log("Now");
+            GM.spawnStar();
+            
         });
     }
 
