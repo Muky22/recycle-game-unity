@@ -1,5 +1,6 @@
 import { Items, Item } from '../classes/Items';
 import { SQL } from '../classes/SQL';
+import { App } from '../app';
 
 export class GameManager {
   private hasItem = false;
@@ -33,17 +34,20 @@ export class GameManager {
         .from('users')
         .where('dev_id', this.socket.data.devId);
 
+      const isCorrecct = Math.random() > 0.5;
+      // this.item.correctAnswer === data.answer
+
       await SQL.knex
         .insert({
           u_id: uidQuery,
           item: this.item.tag,
           answer: data.answer,
           correct_answer: this.item.correctAnswer,
-          correct: this.item.correctAnswer === data.answer ? 1 : 1, // druhe je 0
+          correct: isCorrecct ? 1 : 0,
         })
         .into('answers');
 
-      if (this.item.correctAnswer === data.answer || true === true) {
+      if (isCorrecct) {
         this.socket.data.LevelManager.onCorrectAnswer();
         this.socket.data.GlobalQuestManager.addProgress();
         this.socket.emit('answerItemRes', { correct: true });
@@ -54,6 +58,10 @@ export class GameManager {
 
       this.item = null;
       this.hasItem = false;
+
+      App.sockets.forEach(c => {
+        c.emit('anyoneSeparate', { correct: isCorrecct });
+      });
     });
   }
 }
