@@ -1,7 +1,5 @@
 ﻿using DG.Tweening;
-using SocketIO;
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +25,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI questNumb, questPerc,editChangedNick;
     public Image globalQuestFillBar;
     public TMP_InputField editInputField;
+    public Ease ease;
 
     [Serializable]
     public struct ItemV2
@@ -53,12 +52,14 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
+      
         SetCollidersPos();
         SetValues();
-
+        DragOBJ.transform.position = new Vector3(0, 0, 85);
         SocketScript.GetInstance();
-
+     
     }
+    
 
     public void OnSliderChange(GameObject slider)
     {
@@ -79,15 +80,13 @@ public class GameManager : MonoBehaviour
             newObj.SetActive(true);
 
             newObj.AddComponent<RotateScript>();
-
-            newObj.transform.rotation = DragOBJ.transform.GetChild(0).transform.rotation;
-            newObj.transform.localScale = DragOBJ.transform.GetChild(0).transform.localScale;
+            newObj.transform.localScale = new Vector3(3,3,3);
             newObj.transform.position = Vector3.zero;
             
             newObj.transform.position = new Vector3(
                 newObj.transform.position.x,
                 newObj.transform.position.y,
-                100
+                85
             );
 
             finalScale = newObj.transform.localScale;
@@ -189,10 +188,10 @@ public class GameManager : MonoBehaviour
             xSize *= -1;
             ySize *= -1;
             // col[i].size = new Vector2(xSize, ySize);
-            col[i].transform.position = new Vector2(leftX,leftY+ySize/2);
+            col[i].transform.position = new Vector3(leftX,leftY+ySize/2,90);
             col[i].transform.localScale = new Vector2(xSize, ySize);
             // col[i].transform.GetChild(0).transform.position += new Vector3(0, 0, 3);
-            bins[i].transform.position = new Vector2( col[i].transform.position.x,bins[i].transform.position.y);
+            bins[i].transform.position = new Vector3( col[i].transform.position.x,bins[i].transform.position.y,83);
             leftX += xSize;
         }
     }
@@ -365,4 +364,21 @@ public class GameManager : MonoBehaviour
     {
         SocketScript.GetInstance().GetProfile();
     }
+
+    public void EffectUpBin(int i) // dobre si potriedil
+    {
+        /*
+        bins[i].transform.DOMoveY(bins[i].transform.position.y + 0.3f, 0.1f).SetEase(ease).OnComplete(()=> 
+        {
+            bins[i].transform.DOMoveY(bins[i].transform.position.y - 0.3f, 0.1f).SetEase(ease);
+        }); */
+        bins[i].transform.DOPunchPosition(new Vector3(0, 0.3f, 0), 0.3f);
+    }
+    
+    public void Vibration() // zle si potriedil
+    {
+        Handheld.Vibrate();
+    }
+    
 }
+
