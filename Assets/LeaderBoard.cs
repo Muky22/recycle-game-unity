@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +7,6 @@ public class Types
 {
     public string TypeName;
     public int[] scores;
-
 }
 
 public class LeaderBoard : MonoBehaviour

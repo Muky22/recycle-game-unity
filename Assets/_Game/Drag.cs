@@ -120,7 +120,7 @@ public class Drag : MonoBehaviour
                             tag = "plastic";
                             break;
                         case 2:
-                            tag = "ewaste";
+                            tag = "organic";
                             break;
                         case 3:
                             tag = "paper";
