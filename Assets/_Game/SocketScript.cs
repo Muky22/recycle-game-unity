@@ -52,6 +52,7 @@ public class SocketScript
             
             socket.Emit("getNick");
             socket.Emit("getHash");
+            Debug.Log("Request item");
         });
         
         socket.On("getNickRes", (data) =>
@@ -115,6 +116,7 @@ public class SocketScript
         socket.On("requestItemRes", (data) =>
         {
             string tag = data.data["item"].ToString().Replace("\"", "");
+            string lang = data.data["lang"].ToString().Replace("\"", "");
             
             GameObject objToSpawn = Resources.Load<GameObject>("Items_" + tag);
             GM.ChooseItem(objToSpawn);
@@ -122,9 +124,7 @@ public class SocketScript
             GM.itemText.transform.DOKill();
             GM.itemText.transform.DOScale(new Vector3(0f, 0f, 0f), 0.2f).OnComplete(() =>
             {
-                GM.itemText.GetComponent<TextMeshProUGUI>().text =
-                    FirstLetterToUpper(ToUnderscoreCase(FirstLetterToUpper(tag).Replace("_", " ").Split(' ')[0]).Replace("_", " "));
-
+                GM.itemText.GetComponent<TextMeshProUGUI>().text = lang;
                 GM.itemText.transform.DOKill();
                 GM.itemText.transform.DOScale(new Vector3(1f, 1f, 1f), 0.4f);
             });
