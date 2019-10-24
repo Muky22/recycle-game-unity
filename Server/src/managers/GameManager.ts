@@ -21,6 +21,7 @@ export class GameManager {
 
       this.socket.emit('requestItemRes', {
         item: this.item.tag,
+        lang: this.item.lang,
       });
     });
 
