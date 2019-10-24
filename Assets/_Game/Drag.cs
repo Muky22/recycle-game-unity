@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,6 +21,10 @@ public class Drag : MonoBehaviour
     private float force = 1.2f;
 
     private int lastI = -1;
+
+    private float dragTime = 0;
+
+    private bool isInit = true;
     
     private void Update()
     {
@@ -36,11 +41,17 @@ public class Drag : MonoBehaviour
                 isDragging = true;
                 dragInitPosX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
 
+                dragTime = Time.time;
+
+                
+                GM.currentItem.transform.DOKill();
                 GM.currentItem.transform.DOScale(new Vector3(
                         GM.finalScale.x * 0.6f,
                         GM.finalScale.x * 0.6f,
                         GM.finalScale.x * 0.6f),
                     1.5f);
+
+                isInit = true;
             }
             
         }
@@ -98,6 +109,22 @@ public class Drag : MonoBehaviour
                 // no longer holding left
                 isDragging = false;
 
+                float timeNow = Time.time;
+                float timeOld = dragTime;
+
+                bool isCancelled = false;
+                
+                if (timeNow - timeOld <= 0.2f)
+                {
+                    isCancelled = true;
+                }
+
+                if (isCancelled)
+                {
+                    resetPosition();
+                    return;
+                }
+
                 if (lastI != -1)
                 {
                     GameObject lastObj = GM.col[lastI];
@@ -135,8 +162,36 @@ public class Drag : MonoBehaviour
                             
                     SocketScript.GetInstance().answerItem(tag);
                     GM.hasItem = false;
+
+                    lastI = -1;
                 }
             }
+        }
+    }
+
+    void resetPosition()
+    {
+        if (lastI != -1)
+        {
+            GameObject lastObj = GM.col[lastI];
+            lastObj.GetComponent<SpriteRenderer>().DOKill();
+            lastObj.GetComponent<SpriteRenderer>().DOFade(0f, 0.3f);
+
+            GM.currentItem.transform.DOKill();
+            GM.currentItem.transform.DOScale(new Vector3(
+                    GM.finalScale.x,
+                    GM.finalScale.x,
+                    GM.finalScale.x),
+                0.1f);
+            
+            
+            GM.currentItem.transform.DOMove(new Vector3(
+                    0,
+                    GM.currentItem.transform.position.y,
+                    GM.currentItem.transform.position.z),
+                0.1f);
+
+            lastI = -1;
         }
     }
 
