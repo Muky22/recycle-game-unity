@@ -7,6 +7,7 @@ import { GameManager } from './managers/GameManager';
 import { LevelManager } from './managers/LevelManager';
 import { GlobalQuestManager } from './managers/GlobalQuestManager';
 import { SQL } from './classes/SQL';
+import { LeaderboardManager } from './managers/LeaderboardManager';
 
 dotenv.config();
 
