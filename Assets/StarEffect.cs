@@ -32,6 +32,6 @@ public class StarEffect : MonoBehaviour
 
         transform.position = startPos;
         transform.DOKill();
-        transform.DOMove(endPos, 1f).OnComplete(() => { Destroy(this.gameObject); });
+        transform.DOMove(endPos, .7f).OnComplete(() => { Destroy(this.gameObject); });
     }
 }

@@ -27,13 +27,14 @@ public class SocketScript
 
 
     private GameManager GM;
+    private LeaderBoard LB;
     private int lastLevelAnimated = -1;
     public string Name;
 
     public SocketScript()
     {
         GM = Camera.main.GetComponent<GameManager>();
-        
+        LB = Camera.main.GetComponent<LeaderBoard>();
         GameObject go = GameObject.Find("SocketIO");
         socket = go.GetComponent<SocketIOComponent>();
         socket.On("connect", (data) =>
@@ -41,6 +42,8 @@ public class SocketScript
             Debug.Log("Connected");
             SocketScript.GetInstance().Login();
         });
+
+       
 
         socket.On("autoAuthRes", (data) =>
         {
@@ -192,6 +195,11 @@ public class SocketScript
             GM.spawnStar();
             
         });
+
+        socket.On("getLeaderboardRes", (data) =>
+        {
+            LB.SetDataToFields(data);
+        });
     }
 
     public void Login()
@@ -245,5 +253,10 @@ public class SocketScript
     
     public static string ToUnderscoreCase(string str) {
         return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
+    }
+
+    public void GetLeaderboard()
+    {
+        socket.Emit("getLeaderboard");
     }
 }
