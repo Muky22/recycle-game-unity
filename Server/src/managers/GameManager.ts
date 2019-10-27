@@ -35,8 +35,7 @@ export class GameManager {
         .from('users')
         .where('dev_id', this.socket.data.devId);
 
-      const isCorrecct = Math.random() > 0.5;
-      // this.item.correctAnswer === data.answer
+      const isCorrecct = this.item.correctAnswer === data.answer;
 
       await SQL.knex
         .insert({
