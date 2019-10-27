@@ -28,7 +28,11 @@ export interface Item {
 
 export class Items {
   static items: Item[] = [
-    { tag: 'AppleHalf_01', correctAnswer: 'organic', lang: 'Polovica z jablka' },
+    {
+      tag: 'AppleHalf_01',
+      correctAnswer: 'organic',
+      lang: 'Polovica z jablka',
+    },
     { tag: 'Apple_01', correctAnswer: 'organic', lang: 'Jablko' },
     { tag: 'Apple_02', correctAnswer: 'organic', lang: 'Jablko' },
     { tag: 'Axe_01', correctAnswer: 'metal', lang: 'Sekera' },
