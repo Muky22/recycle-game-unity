@@ -10,16 +10,16 @@ export class LeaderboardManager {
   async register() {
     this.socket.on('getLeaderboard', async () => {
       const promises: any[] = [
+        this.getTodayTotalRecycled(),
+        this.getTotalLeaderboard(),
+        this.getLevelRecycled(),
+        this.getRecycleRatio(),
         this.getTypeRecycled('glass', 'Glass Recycled'),
         this.getTypeRecycled('metal', 'Metal Trash Recycled'),
         this.getTypeRecycled('mixed', 'Mixed Trash Recycled'),
         this.getTypeRecycled('paper', 'Paper Trash Recycled'),
         this.getTypeRecycled('plastic', 'Plastic Trash Recycled'),
         this.getTypeRecycled('organic', 'Organic Trash Recycled'),
-        this.getRecycleRatio(),
-        this.getTodayTotalRecycled(),
-        this.getLevelRecycled(),
-        this.getTotalLeaderboard(),
       ];
       const boards = await Promise.all(promises);
 

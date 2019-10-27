@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-const port = process.env.PORT || 5000;
+const port = 5559;
 
 SQL.getInstance();
 
