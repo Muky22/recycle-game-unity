@@ -235,16 +235,7 @@ export class Items {
   ];
 
   public static getRandomItem(socket): Item {
-    if (socket.data.lastItem === undefined) {
-      socket.data.lastItem = 0;
-    } else {
-      socket.data.lastItem++;
-    }
-
-    if (socket.data.lastItem > Items.items.length - 1) {
-      socket.data.lastItem = Items.items.length - 1;
-    }
-
-    return Items.items[socket.data.lastItem];
+    const item = Items.items[Math.floor(Math.random() * Items.items.length)];
+    return item;
   }
 }
